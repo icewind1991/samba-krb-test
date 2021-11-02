@@ -17,7 +17,7 @@ function waitContainer {
   printf "$lf"
 }
 
-docker rm -f dc apache client
+docker rm -f dc apache
 
 mkdir /tmp/shared
 
@@ -34,8 +34,13 @@ docker run -d --name apache -v /srv/http/smb:/var/www/html -v /tmp/shared:/share
 APACHE_IP=$(docker inspect apache --format '{{.NetworkSettings.IPAddress}}')
 
 # add the dns record for apache
-docker exec -it dc samba-tool dns add krb.domain.test domain.test httpd A $APACHE_IP -U administrator --password=passwOrd1
+docker exec dc samba-tool dns add krb.domain.test domain.test httpd A $APACHE_IP -U administrator --password=passwOrd1
 
 # run our commands
-docker run -it --rm --name client -v /tmp/shared:/shared --dns $DC_IP --hostname client.domain.test icewind1991/samba-krb-test-client \
-  curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php
+LIST=$(docker run -it --rm --name client -v /tmp/shared:/shared --dns $DC_IP --hostname client.domain.test icewind1991/samba-krb-test-client \
+  curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php)
+LIST=$(echo $LIST | tr -d '[:space:]')
+
+echo $LIST
+
+[[ $LIST == "test.txt" ]]
