@@ -3,4 +3,4 @@
 DC_IP=$1
 shift
 
-docker run -it --rm --name client -v /tmp/shared:/shared --dns $DC_IP --hostname client.domain.test icewind1991/samba-krb-test-client $@
+docker run --rm --name client -v /tmp/shared:/shared --dns $DC_IP --hostname client.domain.test icewind1991/samba-krb-test-client $@

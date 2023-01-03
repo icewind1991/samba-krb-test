@@ -1,0 +1,40 @@
+on: [push, pull_request]
+
+name: Test
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Checkout smb
+        uses: actions/checkout@v2
+        with:
+          repository: icewind1991/smb
+          path: smb
+      - name: Setup smb
+        run: |
+          cd smb
+          composer i
+          cd ..
+      - name: Build updated images
+        run: ./build.sh
+      - name: Run smb kerberos SSO
+        run: |
+          DC_IP=$(./start-dc.sh)
+
+          echo "DC: $DC_IP"
+
+          # start apache
+          APACHE_IP=$(./start-apache.sh $DC_IP $PWD/smb)
+          echo "APACHE: $APACHE_IP"
+
+          LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php)
+
+          echo $LIST
+
+          LIST=$(echo $LIST | tr -d '[:space:]')
+
+          [[ $LIST == "test.txt" ]]
