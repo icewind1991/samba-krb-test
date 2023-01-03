@@ -1,48 +1,17 @@
 #!/usr/bin/env bash
 
-function getContainerHealth {
-  docker inspect --format "{{.State.Health.Status}}" $1
-}
+DC_IP=$(./start-dc.sh)
 
-function waitContainer {
-  while STATUS=$(getContainerHealth $1); [ $STATUS != "healthy" ]; do
-    if [ $STATUS == "unhealthy" ]; then
-      echo "Failed!"
-      exit -1
-    fi
-    printf .
-    lf=$'\n'
-    sleep 1
-  done
-  printf "$lf"
-}
-
-docker rm -f dc apache
-
-mkdir -p /tmp/shared
-
-# start the dc
-docker run -dit --name dc -v /tmp/shared:/shared --hostname krb.domain.test --cap-add SYS_ADMIN icewind1991/samba-krb-test-dc
-DC_IP=$(docker inspect dc --format '{{.NetworkSettings.IPAddress}}')
-
-waitContainer dc
-
-echo "started2"
+echo "DC: $DC_IP"
 
 # start apache
-docker run -d --name apache -v /srv/http/smb:/var/www/html -v /tmp/shared:/shared --dns $DC_IP --hostname httpd.domain.test icewind1991/samba-krb-test-apache
-APACHE_IP=$(docker inspect apache --format '{{.NetworkSettings.IPAddress}}')
+APACHE_IP=$(./start-apache.sh $DC_IP /srv/http/smb)
+echo "APACHE: $APACHE_IP"
 
-# add the dns record for apache
-docker exec dc samba-tool dns add krb.domain.test domain.test httpd A $APACHE_IP -U administrator --password=passwOrd1
-
-# run our commands
-LIST=$(docker run -it --rm --name client -v /tmp/shared:/shared --dns $DC_IP --hostname client.domain.test icewind1991/samba-krb-test-client \
-  curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php)
+LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php)
 
 echo $LIST
 
 LIST=$(echo $LIST | tr -d '[:space:]')
-
 
 [[ $LIST == "test.txt" ]]
