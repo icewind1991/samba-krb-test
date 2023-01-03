@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function getContainerHealth {
   docker inspect --format "{{.State.Health.Status}}" $1
@@ -19,7 +19,7 @@ function waitContainer {
 
 docker rm -f dc apache
 
-mkdir /tmp/shared
+mkdir -p /tmp/shared
 
 # start the dc
 docker run -dit --name dc -v /tmp/shared:/shared --hostname krb.domain.test --cap-add SYS_ADMIN icewind1991/samba-krb-test-dc
@@ -39,8 +39,10 @@ docker exec dc samba-tool dns add krb.domain.test domain.test httpd A $APACHE_IP
 # run our commands
 LIST=$(docker run -it --rm --name client -v /tmp/shared:/shared --dns $DC_IP --hostname client.domain.test icewind1991/samba-krb-test-client \
   curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php)
-LIST=$(echo $LIST | tr -d '[:space:]')
 
 echo $LIST
+
+LIST=$(echo $LIST | tr -d '[:space:]')
+
 
 [[ $LIST == "test.txt" ]]
