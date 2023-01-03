@@ -1,4 +1,4 @@
-FROM php:7.4-apache-buster
+FROM php:8.1-apache-buster
 
 ADD krb5.seed /krb5.seed
 RUN apt-get update && \
