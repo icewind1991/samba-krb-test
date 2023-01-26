@@ -7,7 +7,6 @@ RUN apt-get update && \
 	apt-get install -y libkrb5-dev \
 		libsmbclient-dev \
 		smbclient \
-		libapache2-mod-auth-kerb \
 		libzip-dev \
 		libfreetype6-dev \
 		libjpeg62-turbo-dev \
@@ -22,6 +21,8 @@ RUN docker-php-ext-configure gd \
 		--with-jpeg \
 		--with-freetype && \
 	docker-php-ext-install gd zip
+
+RUN apt-get install -y libapache2-mod-auth-kerb
 
 ADD 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 ADD entrypoint.sh /entrypoint.sh

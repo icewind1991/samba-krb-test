@@ -32,5 +32,5 @@ echo "DC: $DC_IP"
 
 - Run a curl command from the client with Kerberos SSO
 ```bash
-/client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php
+./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php
 ```
