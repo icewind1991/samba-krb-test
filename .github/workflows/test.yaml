@@ -40,6 +40,11 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     needs: build
+    strategy:
+      matrix:
+        variant:
+          - ""
+          - "-gssapi"
 
     steps:
       - name: Checkout
@@ -54,15 +59,12 @@ jobs:
           cd smb
           composer i
           cd ..
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           path: /tmp
       - name: Load Docker images
         run: |
-          ls -l /tmp
           docker load --input /tmp/apache/apache.tar
           docker load --input /tmp/apache-gssapi/apache-gssapi.tar
           docker load --input /tmp/client/client.tar
@@ -75,8 +77,10 @@ jobs:
           echo "DC: $DC_IP"
 
           # start apache
-          APACHE_IP=$(./start-apache.sh $DC_IP $PWD/smb)
+          APACHE_IP=$(./start-apache.sh $DC_IP $PWD/smb ${{ matrix.variant }})
           echo "APACHE: $APACHE_IP"
+          
+          docker ps -a
 
           LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php)
 
