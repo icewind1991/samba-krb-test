@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 
-cd apache
+docker build -t icewind1991/samba-krb-test-apache apache
+docker build -t icewind1991/samba-krb-test-apache-gssapi apache-gssapi
 
-docker build -t icewind1991/samba-krb-test-apache .
+docker build -t icewind1991/samba-krb-test-client client
 
-cd ../client
-
-docker build -t icewind1991/samba-krb-test-client .
-
-cd ../dc
-
-docker build -t icewind1991/samba-krb-test-dc .
+docker build -t icewind1991/samba-krb-test-dc dc

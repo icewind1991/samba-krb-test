@@ -14,5 +14,3 @@ RUN chmod +x /init-config.sh
 HEALTHCHECK --interval=1s --start-period=60s CMD bash -c '[ -f /done ]'
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-

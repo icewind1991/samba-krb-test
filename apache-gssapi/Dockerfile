@@ -22,7 +22,7 @@ RUN docker-php-ext-configure gd \
 		--with-freetype && \
 	docker-php-ext-install gd zip
 
-RUN apt-get install -y libapache2-mod-auth-kerb
+RUN apt-get install -y libapache2-mod-auth-gssapi
 
 ADD 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 ADD entrypoint.sh /entrypoint.sh
