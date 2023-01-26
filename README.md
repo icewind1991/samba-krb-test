@@ -10,7 +10,8 @@ Docker images for testing kerberos sso with php.
 
 ### Apache
 
-`icewind1991/samba-krb-test-apache` contains an apache+php setup based on `php:8.1-apache-buster` with the required kerberos bits installed
+`icewind1991/samba-krb-test-apache` contains an apache+mod-auth-kerb+php setup based on `php:8.1-apache-buster`
+`icewind1991/samba-krb-test-apache-gssapi` contains an apache+php+mod-auth-gssapi setup based on `php:8.1-apache-buster`
 
 ### Client
 
@@ -28,6 +29,11 @@ echo "DC: $DC_IP"
 - Start Apache with the desired php app
 ```bash
 ./start-apache.sh $DC_IP /path/to/php/root
+```
+
+or
+```bash
+./start-apache.sh $DC_IP /path/to/php/root -gssapi
 ```
 
 - Run a curl command from the client with Kerberos SSO
