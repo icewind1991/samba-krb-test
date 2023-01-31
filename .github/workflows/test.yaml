@@ -16,6 +16,7 @@ jobs:
         image:
           - apache
           - apache-gssapi
+          - apache-fpm-gssapi
           - client
           - dc
 
@@ -45,6 +46,7 @@ jobs:
         variant:
           - ""
           - "-gssapi"
+          - "-fpm-gssapi"
 
     steps:
       - name: Checkout
@@ -59,16 +61,26 @@ jobs:
           cd smb
           composer i
           cd ..
-      - name: Download artifacts
+      - name: Download dc image
         uses: actions/download-artifact@v3
         with:
           path: /tmp
+          name: dc
+      - name: Download apache image
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp
+          name: apache${{ matrix.variant }}
+      - name: Download client image
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp
+          name: client
       - name: Load Docker images
         run: |
-          docker load --input /tmp/apache/apache.tar
-          docker load --input /tmp/apache-gssapi/apache-gssapi.tar
-          docker load --input /tmp/client/client.tar
-          docker load --input /tmp/dc/dc.tar
+          docker load --input /tmp/apache${{ matrix.variant }}.tar
+          docker load --input /tmp/client.tar
+          docker load --input /tmp/dc.tar
           docker image ls -a
       - name: Run smb kerberos SSO
         run: |
