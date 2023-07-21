@@ -1,4 +1,4 @@
-name: Test
+name: Build, test and push
 
 on:
   pull_request:
@@ -101,3 +101,35 @@ jobs:
           LIST=$(echo $LIST | tr -d '[:space:]')
 
           [[ $LIST == "test.txt" ]]
+
+  push:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        image:
+          - apache
+          - apache-gssapi
+          - apache-fpm-gssapi
+          - client
+          - dc
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: icewind1991
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Download ${{ matrix.image }} image
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp
+          name: ${{ matrix.image }}
+      - name: Load ${{ matrix.image }} image
+        run: |
+          docker load --input /tmp/${{ matrix.image }}.tar
+      - name: Push ${{ matrix.image }} image
+        run: |
+          docker push icewind1991/samba-krb-test-${{ matrix.image }}
