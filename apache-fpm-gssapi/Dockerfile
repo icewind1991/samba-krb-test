@@ -21,7 +21,7 @@ RUN docker-php-ext-configure gd \
 		--enable-gd \
 		--with-jpeg \
 		--with-freetype && \
-	docker-php-ext-install gd zip
+	docker-php-ext-install gd zip pcntl
 
 ENV APACHE_CONFDIR /etc/apache2
 ENV APACHE_ENVVARS $APACHE_CONFDIR/envvars
@@ -62,6 +62,7 @@ RUN set -eux; \
 
 RUN a2dismod proxy && a2enmod proxy_fcgi
 RUN apt-get install -y libapache2-mod-auth-gssapi
+RUN sed -i -e "s|clear_env = no|clear_env = yes|" /usr/local/etc/php-fpm.d/docker.conf
 
 ADD 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 ADD entrypoint.sh /entrypoint.sh
