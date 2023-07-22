@@ -20,7 +20,7 @@ RUN docker-php-ext-configure gd \
 		--enable-gd \
 		--with-jpeg \
 		--with-freetype && \
-	docker-php-ext-install gd zip
+	docker-php-ext-install gd zip pcntl
 
 RUN apt-get install -y libapache2-mod-auth-gssapi
 
