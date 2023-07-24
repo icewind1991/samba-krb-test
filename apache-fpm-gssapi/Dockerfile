@@ -68,6 +68,7 @@ RUN sed -i -e "s|clear_env = no|clear_env = yes|" /usr/local/etc/php-fpm.d/docke
 ADD 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 ADD entrypoint.sh /entrypoint.sh
 COPY apache2-foreground /usr/local/bin/
+RUN echo 'memory_limit = 512M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
 
 ENTRYPOINT ["/entrypoint.sh"]
 

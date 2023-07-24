@@ -27,6 +27,7 @@ RUN apt-get install -y libapache2-mod-auth-kerb
 
 ADD 000-default.conf /etc/apache2/sites-enabled/000-default.conf
 ADD entrypoint.sh /entrypoint.sh
+RUN echo 'memory_limit = 512M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
 
 ENTRYPOINT ["/entrypoint.sh"]
 
