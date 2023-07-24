@@ -1,4 +1,5 @@
 FROM php:8.1-apache-buster
+LABEL org.opencontainers.image.source="https://github.com/icewind1991/samba-krb-test"
 
 ADD krb5.seed /krb5.seed
 RUN apt-get update && \
