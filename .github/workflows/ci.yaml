@@ -17,6 +17,7 @@ jobs:
           - apache
           - apache-gssapi
           - apache-fpm-gssapi
+          - nginx-fpm-gssapi
           - client
           - dc
 
@@ -44,9 +45,10 @@ jobs:
     strategy:
       matrix:
         variant:
-          - ""
-          - "-gssapi"
-          - "-fpm-gssapi"
+          - "apache"
+          - "apache-gssapi"
+          - "apache-fpm-gssapi"
+          - "nginx-fpm-gssapi"
 
     steps:
       - name: Checkout
@@ -66,11 +68,11 @@ jobs:
         with:
           path: /tmp
           name: dc
-      - name: Download apache image
+      - name: Download server image
         uses: actions/download-artifact@v3
         with:
           path: /tmp
-          name: apache${{ matrix.variant }}
+          name: ${{ matrix.variant }}
       - name: Download client image
         uses: actions/download-artifact@v3
         with:
@@ -78,7 +80,7 @@ jobs:
           name: client
       - name: Load Docker images
         run: |
-          docker load --input /tmp/apache${{ matrix.variant }}.tar
+          docker load --input /tmp/${{ matrix.variant }}.tar
           docker load --input /tmp/client.tar
           docker load --input /tmp/dc.tar
           docker image ls -a
@@ -88,13 +90,13 @@ jobs:
 
           echo "DC: $DC_IP"
 
-          # start apache
-          APACHE_IP=$(./start-apache.sh $DC_IP $PWD/smb ${{ matrix.variant }})
-          echo "APACHE: $APACHE_IP"
+          # start server
+          SERVER_IP=$(./start-server.sh $DC_IP $PWD/smb ${{ matrix.variant }})
+          echo "SERVER: SERVER_IP"
           
           docker ps -a
 
-          LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-apache-kerberos.php)
+          LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-sso-kerberos.php)
 
           echo $LIST
 
@@ -110,13 +112,12 @@ jobs:
           - apache
           - apache-gssapi
           - apache-fpm-gssapi
+          - nginx-fpm-gssapi
           - client
           - dc
     needs: test
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
