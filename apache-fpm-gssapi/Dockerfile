@@ -15,8 +15,14 @@ RUN apt-get update && \
 		libmcrypt-dev \
 		libpng-dev
 
-RUN pecl install krb5 smbclient && \
-	docker-php-ext-enable krb5 smbclient
+RUN pecl install krb5 smbclient xdebug && \
+	docker-php-ext-enable krb5 smbclient xdebug && \
+    echo "xdebug.mode=debug" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
+    echo "xdebug.start_with_request=trigger" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
+    echo "xdebug.discover_client_host=true" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
+    echo "xdebug.client_host=host.docker.internal" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
+    echo "xdebug.log_level=0" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
+    echo "memory_limit = 512M" > $PHP_INI_DIR/conf.d/docker-php-memlimit.ini
 
 RUN docker-php-ext-configure gd \
 		--enable-gd \
