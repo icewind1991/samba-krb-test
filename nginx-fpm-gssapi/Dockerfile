@@ -1,4 +1,5 @@
-FROM php:8.1-fpm-bullseye@sha256:45d0b87bee8b630648ec7b1d788475f98820a12bd81abc6ebdf3462d9614eb54
+ARG PHP_VERSION
+FROM php:$PHP_VERSION-fpm-bullseye
 LABEL org.opencontainers.image.source="https://github.com/icewind1991/samba-krb-test"
 
 ADD krb5.seed /krb5.seed
@@ -16,8 +17,8 @@ RUN apt-get update && \
 		libpng-dev \
     	nginx
 
-RUN pecl install krb5 smbclient xdebug && \
-	docker-php-ext-enable krb5 smbclient xdebug && \
+RUN pecl install krb5 smbclient && \
+	docker-php-ext-enable krb5 smbclient && \
     echo "xdebug.mode=debug" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
     echo "xdebug.start_with_request=trigger" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
     echo "xdebug.discover_client_host=true" >> $PHP_INI_DIR/conf.d/xdebug.ini && \
