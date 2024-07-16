@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 ADD krb5.seed /krb5.seed
 RUN apt-get update && \
