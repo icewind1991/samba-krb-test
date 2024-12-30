@@ -128,7 +128,7 @@ jobs:
           
           docker ps -a
 
-          LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/example-sso-kerberos.php)
+          LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/kerb/example-sso-kerberos.php)
 
           echo $LIST
 
