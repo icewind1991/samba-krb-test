@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ '7.4', '8.0', '8.1', '8.2' ]
+        php-version: ["7.4", "8.0", "8.1", "8.2"]
         image:
           - apache
           - apache-gssapi
@@ -32,8 +32,7 @@ jobs:
           file: ./${{ matrix.image }}/Dockerfile
           tags: icewind1991/samba-krb-test-${{ matrix.image }}:${{ matrix.php-version }}
           outputs: type=docker,dest=/tmp/${{ matrix.image }}.tar
-          build-args:
-            PHP_VERSION=${{ matrix.php-version }}
+          build-args: PHP_VERSION=${{ matrix.php-version }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -72,7 +71,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ '7.4', '8.0', '8.1', '8.2' ]
+        php-version: ["7.4", "8.0", "8.1", "8.2"]
         variant:
           - "apache"
           - "apache-gssapi"
@@ -125,7 +124,7 @@ jobs:
           # start server
           SERVER_IP=$(./start-server.sh $DC_IP $PWD/smb ${{ matrix.variant }} ${{ matrix.php-version }})
           echo "SERVER: $SERVER_IP"
-          
+
           docker ps -a
 
           LIST=$(./client-cmd.sh $DC_IP curl --negotiate -u testuser@DOMAIN.TEST: --delegation always http://httpd.domain.test/kerb/example-sso-kerberos.php)
@@ -137,11 +136,11 @@ jobs:
           [[ $LIST == "test.txt" ]]
 
   push-php:
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [ '7.4', '8.0', '8.1', '8.2' ]
+        php-version: ["7.4", "8.0", "8.1", "8.2"]
         image:
           - apache
           - apache-gssapi
@@ -178,7 +177,7 @@ jobs:
           docker push ghcr.io/icewind1991/samba-krb-test-${{ matrix.image }}:${{ matrix.php-version }}
 
   push-other:
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     strategy:
       matrix:
