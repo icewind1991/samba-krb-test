@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o errexit -o nounset -o pipefail
 /init-config.sh
 
 samba-tool user create httpd-service --random-password
