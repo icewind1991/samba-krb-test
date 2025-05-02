@@ -33,7 +33,7 @@ RUN docker-php-ext-configure gd \
 	docker-php-ext-install gd zip pcntl
 
 COPY libnginx-mod-http-auth-spnego_1.18.0-6.1+deb11u3_amd64.deb /usr/local
-RUN dpkg --install /usr/local/libnginx-mod-http-auth-spnego_1.18.0-6.1+deb11u3_amd64.deb
+RUN dpkg --force-depends --install /usr/local/libnginx-mod-http-auth-spnego_1.18.0-6.1+deb11u3_amd64.deb
 RUN sed -i -e "s|clear_env = yes|clear_env = no|" /usr/local/etc/php-fpm.d/docker.conf
 
 ADD nginx.conf /etc/nginx/nginx.conf
