@@ -1,6 +1,0 @@
-krb5-config	krb5-config/add_servers	boolean	true
-krb5-config	krb5-config/add_servers_realm	string	DOMAIN.TEST
-krb5-config	krb5-config/admin_server	string	krb.domain.test
-krb5-config	krb5-config/kerberos_servers	string  krb.domain.test	
-krb5-config	krb5-config/default_realm	string	DOMAIN.TEST
-krb5-config	krb5-config/read_conf	boolean	true
