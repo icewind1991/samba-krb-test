@@ -1,5 +1,5 @@
 ARG PHP_VERSION
-FROM php:$PHP_VERSION-fpm-buster
+FROM php:$PHP_VERSION-fpm-trixie
 LABEL org.opencontainers.image.source="https://github.com/icewind1991/samba-krb-test"
 
 ADD krb5.seed /krb5.seed

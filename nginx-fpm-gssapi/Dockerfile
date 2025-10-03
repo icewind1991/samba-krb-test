@@ -1,5 +1,5 @@
 ARG PHP_VERSION
-FROM php:$PHP_VERSION-fpm-bullseye
+FROM php:$PHP_VERSION-fpm-trixie
 LABEL org.opencontainers.image.source="https://github.com/icewind1991/samba-krb-test"
 
 ADD krb5.seed /krb5.seed
@@ -32,8 +32,7 @@ RUN docker-php-ext-configure gd \
 		--with-freetype && \
 	docker-php-ext-install gd zip pcntl
 
-COPY libnginx-mod-http-auth-spnego_1.18.0-6.1+deb11u3_amd64.deb /usr/local
-RUN dpkg --force-depends --install /usr/local/libnginx-mod-http-auth-spnego_1.18.0-6.1+deb11u3_amd64.deb
+RUN apt-get install -y libnginx-mod-http-auth-spnego
 RUN sed -i -e "s|clear_env = yes|clear_env = no|" /usr/local/etc/php-fpm.d/docker.conf
 
 ADD nginx.conf /etc/nginx/nginx.conf
